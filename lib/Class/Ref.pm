@@ -5,7 +5,9 @@ use warnings;
 
 use Scalar::Util ();
 
-our $VERSION = 'v0.01';
+our $VERSION = v0.01;
+
+our $raw_access = 0;
 
 # disable defaults at your peril
 our %nowrap = map { ($_ => 1) } (
@@ -15,13 +17,13 @@ our %nowrap = map { ($_ => 1) } (
 
 my $bless = sub {
     my ($class, $ref) = @_;
+    return $ref if $raw_access;
     my $type = Scalar::Util::reftype $ref;
     return bless \$ref => "$class\::$type";
 };
 
 my $test = sub {
-    return unless $_[0];
-    return unless ref $_[0];
+    return unless $_[0] and ref $_[0];
     return if Scalar::Util::blessed $_[0];
     return if $nowrap{ Scalar::Util::reftype $_[0] };
     1;
@@ -30,8 +32,8 @@ my $test = sub {
 my $assign = sub {
     my $v = shift;
     $$v = pop if @_;
-    my $o = $test->($$v) ? \__PACKAGE__->$bless($$v) : $v;
-    return $o;
+    return $test->($$v) ? \__PACKAGE__->$bless($$v) : $v;
+    #return $o;
 };
 
 sub new {
@@ -42,35 +44,71 @@ sub new {
 
 package Class::Ref::HASH;
 
-use overload '%{}' => sub { ${ $_[0] } };
+use overload '%{}' => sub {
+    return ${ $_[0] } if $raw_access;
+    tie my %h, __PACKAGE__ . '::Tie', ${ $_[0] };
+    \%h;
+  },
+  fallback => 1;
 
 our $AUTOLOAD;
 
-# TODO research usefulness of lvalue functionality
-sub AUTOLOAD    #: lvalue
-{
+sub AUTOLOAD {
+    # enable access to $h->{AUTOLOAD}
+    my ($name) = defined $AUTOLOAD ? $AUTOLOAD =~ /([^:]+)$/ : ('AUTOLOAD');
+
+    # undef so that we can detect if next call is for $h->{AUTOLOAD}
+    # - needed cause $AUTOLOAD stays set to previous value until next call
+    undef $AUTOLOAD;
+
+    # NOTE must do this after AUTOLOAD check
+    # - when a wrapped HASH object is contained inside a wrapped ARRAY object
+    #   this call to 'shift' trigger the tie logic pertaining to ARRAY.
+    #   doing so screws up the value of $AUTOLOAD
     my $self = shift;
-    my ($name) = $AUTOLOAD =~ /([^:]+)$/;
+
+    # simulate a fetch for a non-existent key without autovivification
+    return undef unless @_ or exists $$self->{$name};
+
+    # keep this broken up in case I decide to implement lvalues
     my $o = $assign->(\$$self->{$name}, @_);
-    $$o;        # FIXME lvalue is lost if $o is a ref wrapper
+    $$o;
 }
 
-sub DESTROY { }
+#sub DESTROY {}
+
+package Class::Ref::HASH::Tie;
+
+# borrowed from Tie::StdHash (in Tie::Hash)
+
+#<<<
+sub TIEHASH  { bless [$_[1]], $_[0] }
+sub STORE    { $_[0][0]->{ $_[1] } = $_[2] }
+sub FETCH    { ${ $assign->(\$_[0][0]->{ $_[1] }) } }
+sub FIRSTKEY { my $a = scalar keys %{ $_[0][0] }; each %{ $_[0][0] } }
+sub NEXTKEY  { each %{ $_[0][0] } }
+sub EXISTS   { exists $_[0][0]->{ $_[1] } }
+sub DELETE   { delete $_[0][0]->{ $_[1] } }
+sub CLEAR    { %{ $_[0][0] } = () }
+sub SCALAR   { scalar %{ $_[0][0] } }
+#>>>
 
 package Class::Ref::ARRAY;
 
+# tie a proxy array around the real one
 use overload '@{}' => sub {
-    # tie a proxy array around the real one
+    return ${ $_[0] } if $raw_access;
     tie my @a, __PACKAGE__ . '::Tie', ${ $_[0] };
     \@a;
-};
+  },
+  fallback => 1;
 
 package Class::Ref::ARRAY::Tie;
 
 # borrowed from Tie::StdArray (in Tie::Array)
 
-# ready... steady... go cross-eyed!!
-sub TIEARRAY { bless [$_[1]] => $_[0] }
+#<<< ready... steady... go cross-eyed!!
+sub TIEARRAY  { bless [$_[1]] => $_[0] }
 sub FETCHSIZE { scalar @{ $_[0][0] } }
 sub STORESIZE { $#{ $_[0][0] } = $_[1] - 1 }
 sub STORE     { $_[0][0]->[$_[1]] = $_[2] }
@@ -82,7 +120,7 @@ sub SHIFT     { shift @{ $_[0][0] } }
 sub UNSHIFT   { my $o = shift->[0]; unshift @$o, @_ }
 sub EXISTS    { exists $_[0][0]->[$_[1]] }
 sub DELETE    { delete $_[0][0]->[$_[1]] }
-
+#>>>
 sub SPLICE {
     my $ob  = shift;
     my $sz  = $ob->FETCHSIZE;
@@ -102,9 +140,9 @@ use overload '&{}' => sub { ${ $_[0] } };
 
 package Class::Ref::REF;
 
-use overload '${}' => sub { ${ $_[0] } };
+use overload '${}' => sub { ${ $_[0] } };    # seg faults
 
-package Class::Ref::SCALAR;    # seg faults
+package Class::Ref::SCALAR;
 
 use base 'Class::Ref::REF';
 
@@ -127,5 +165,11 @@ use base 'Class::Ref::GLOB';
 package Class::Ref::IO;
 
 use base 'Class::Ref::GLOB';
+
+=head2 SEE ALSO
+    Class::Hash
+    Class::ConfigHash
+    Hash::AsObject
+=cut
 
 1;
