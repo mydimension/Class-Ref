@@ -20,7 +20,7 @@ is_deeply $$obj, \%hash, 'inner ref is correct';
 
 isa_ok $obj->foo, 'Class::Ref::HASH', 'deep hash blessed';
 
-isa_ok tied(%{$obj->foo}), 'Class::Ref::HASH::Tie', 'deep array tied';
+isa_ok tied(%{$obj->foo}), 'Class::Ref::HASH::Tie', 'deep hash tied';
 
 is_deeply ${$obj->foo}, $hash{foo}, 'deep HASH preserved';
 
