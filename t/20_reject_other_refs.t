@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 8;
+use Test::More tests => 16;
 
 use Class::Ref;
 
@@ -31,4 +31,11 @@ my %tests = (
 while (my ($type, $ref) = each %tests) {
     eval { Class::Ref->new($ref) };
     like $@, $error_test, "reject $type";
+}
+
+my $obj = Class::Ref->new({});
+
+while (my ($type, $ref) = each %tests) {
+    $obj->holder($ref);
+    is ref $obj->holder, $type, "passthru $type";
 }
