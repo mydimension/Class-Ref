@@ -60,17 +60,5 @@ t.pl
 ^MYMETA\.
 #!end included /opt/local/lib/perl5/5.12.4/ExtUtils/MANIFEST.SKIP
 
-# Avoid configuration metadata file
-^MYMETA\.
-
-# Avoid Module::Build generated and utility files.
-\bBuild$
-\bBuild.bat$
-\b_build
-\bBuild.COM$
-\bBUILD.COM$
-\bbuild.com$
-^MANIFEST\.SKIP
-
 # Avoid archives of this distribution
 \bClass-Ref-[\d\.\_]+

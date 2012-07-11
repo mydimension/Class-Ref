@@ -6,7 +6,7 @@ my $build = Module::Build->new(
     module_name        => 'Class::Ref',
     license            => 'perl',
     configure_requires => { 'Module::Build' => '0.4' },
-    requires           => { perl => '>= 5.6.1', 'Scalar::Util' => 0 },
+    requires           => { perl => '5.6.1', 'Scalar::Util' => 0, Carp => 0, },
     meta_merge         => {
         no_index => {
             package => [

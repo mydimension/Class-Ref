@@ -37,8 +37,9 @@
       },
       "runtime" : {
          "requires" : {
+            "Carp" : 0,
             "Scalar::Util" : 0,
-            "perl" : 0
+            "perl" : "v5.6.1"
          }
       }
    },
