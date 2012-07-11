@@ -30,6 +30,14 @@ OPTIONS
         structure, setting $raw_access with cause every member retrieval to
         just the referenced data rather than a wrapped form of it.
 
+        The observant reader will note that this does not provide access to
+        the base data. In order to access that, you must dereference the
+        object:
+
+            $$o; $ returns { foo => { bar => 1 } } unblessed
+
+        See GUTS for more information.
+
     $allow_undef (Default: 0)
             $o = Class::Ref->new({ foo => { bar => 1 } });
             {
@@ -74,6 +82,27 @@ HASH Refs
     originally wrapped.
 
 ARRAY Refs
+    Wrapping ARRAYs is much less straightforward. Using an "AUTOLOAD" method
+    doesn't help because perl symbols cannot begin with a number. Makes it a
+    little difficult to do the following:
+
+        $o->0;    # compile error
+
+    So for the purpose of this module, wrapped ARRAYs exactly like an ARRAY
+    reference:
+
+        $o->[0];    # ahh, much better
+
+    The tricky part comes in wanting to make sure that values returned from
+    such a call would still be wrapped:
+
+        $o->[0]->foo;    # $o = [{ foo => 'bar' }]
+
+    See GUTS for more discussion on how this is done.
+
+    I am still debating if adding formal accessors moethods would be helpful
+    in this context.
+
 GUTS
     All objects created and returned by Class::Ref are blessed REF types.
     This is what protects the original reference from being blessed into an
@@ -91,6 +120,17 @@ GUTS
 
         $o = Class::Ref->new({ foo => 1 });
         $$o->{foo};
+
+CAVEATS
+    When dealing with a wrapped HASH, there is no way to access keys named
+    "isa" and "can". They are core methods perl uses to interact with OO
+    values.
+
+    Accessing HASH members with invalid perl symbols is possible with a
+    little work:
+
+        my $method = '0) key';
+        $o->$method;    # access $o->{'0) key'};
 
 SEE ALSO
     I've always wanted to have this kind of functionality for hashes that
@@ -117,4 +157,10 @@ SEE ALSO
 
 AUTHOR
     William Cox <mydimension@gmail.com>
+
+LICENSE
+    This program is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
+    See <http://dev.perl.org/licenses/>
 
