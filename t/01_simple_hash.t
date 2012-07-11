@@ -59,7 +59,7 @@ ok exists $$obj->{bah}, 'assignment of undef created key';
 $obj->AUTOLOAD('foobar');
 is $obj->AUTOLOAD, 'foobar', 'access AUTOLOAD hash key';
 
-is scalar(%$obj), scalar(%hash), 'tied scalar operator';
+ok !!%$obj, 'tied scalar operator';
 
 %$obj = ();
-is scalar(%$obj), 0, 'tied clear operator';
+ok keys(%$obj) == 0, 'tied clear operator';
