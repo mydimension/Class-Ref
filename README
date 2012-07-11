@@ -74,44 +74,6 @@ HASH Refs
     originally wrapped.
 
 ARRAY Refs
-    sub SPLICE { my $ob = shift; my $sz = $ob->FETCHSIZE; my $off = @_ ?
-    shift : 0; $off += $sz if $off < 0; my $len = @_ ? shift : $sz - $off;
-    splice @{ $ob->[0] }, $off, $len, @_; }
-
-    ## ## These are bypassed via %nowrap for safety/sanity ##
-
-    package Class::Ref::CODE;
-
-    use overload '&{}' => sub { ${ $_[0] } };
-
-    package Class::Ref::REF;
-
-    use overload '${}' => sub { ${ $_[0] } }; # seg faults
-
-    package Class::Ref::SCALAR;
-
-    use base 'Class::Ref::REF';
-
-    package Class::Ref::LVALUE;
-
-    use base 'Class::Ref::REF';
-
-    package Class::Ref::VSTRING;
-
-    use base 'Class::Ref::REF';
-
-    package Class::Ref::GLOB;
-
-    use overload '*{}' => sub { ${ $_[0] } };
-
-    package Class::Ref::FORMAT;
-
-    use base 'Class::Ref::GLOB';
-
-    package Class::Ref::IO;
-
-    use base 'Class::Ref::GLOB';
-
 GUTS
     All objects created and returned by Class::Ref are blessed REF types.
     This is what protects the original reference from being blessed into an
@@ -155,14 +117,4 @@ SEE ALSO
 
 AUTHOR
     William Cox <mydimension@gmail.com>
-
-POD ERRORS
-    Hey! The above document had some coding errors, which are explained
-    below:
-
-    Around line 252:
-        Unknown directive: =comment
-
-    Around line 266:
-        Unknown directive: =comment
 

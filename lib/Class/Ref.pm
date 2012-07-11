@@ -249,59 +249,6 @@ sub EXISTS    { exists $_[0][0]->[$_[1]] }
 sub DELETE    { delete $_[0][0]->[$_[1]] }
 sub EXTEND    { $_[0]->STORESIZE($_[1]) }
 sub SPLICE    { splice @{ shift->[0] }, shift, shift, @_ }
-=comment
-
-sub SPLICE {
-    my $ob  = shift;
-    my $sz  = $ob->FETCHSIZE;
-    my $off = @_ ? shift : 0;
-    $off += $sz if $off < 0;
-    my $len = @_ ? shift : $sz - $off;
-    splice @{ $ob->[0] }, $off, $len, @_;
-}
-
-=cut
-#>>>
-
-=comment
-
-##
-## These are bypassed via %nowrap for safety/sanity
-##
-
-package Class::Ref::CODE;
-
-use overload '&{}' => sub { ${ $_[0] } };
-
-package Class::Ref::REF;
-
-use overload '${}' => sub { ${ $_[0] } };    # seg faults
-
-package Class::Ref::SCALAR;
-
-use base 'Class::Ref::REF';
-
-package Class::Ref::LVALUE;
-
-use base 'Class::Ref::REF';
-
-package Class::Ref::VSTRING;
-
-use base 'Class::Ref::REF';
-
-package Class::Ref::GLOB;
-
-use overload '*{}' => sub { ${ $_[0] } };
-
-package Class::Ref::FORMAT;
-
-use base 'Class::Ref::GLOB';
-
-package Class::Ref::IO;
-
-use base 'Class::Ref::GLOB';
-
-=cut
 
 =head1 GUTS
 
