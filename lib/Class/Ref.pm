@@ -167,9 +167,10 @@ sub AUTOLOAD {
     undef $AUTOLOAD;
 
     # NOTE must do this after AUTOLOAD check
-    # - when a wrapped HASH object is contained inside a wrapped ARRAY object
-    #   this call to 'shift' triggers the tie logic pertaining to ARRAY.
-    #   doing so screws up the value of $AUTOLOAD
+    # - weird things happen when a wrapped HASH is an element of a wrapped
+    #   ARRAY. tie'd ARRAYs have some lvalue magic on their FETCHed values.
+    #   As a result, this call to shift triggers the tie object call to FETCH
+    #   to ensure the lvalue is still valid.
     my $self = shift;
 
     # simulate a fetch for a non-existent key without autovivification
@@ -201,6 +202,12 @@ sub CLEAR    { %{ $_[0][0] } = () }
 sub SCALAR   { scalar %{ $_[0][0] } }
 #>>>
 
+=head1 ARRAY Refs
+
+
+
+=cut
+
 package Class::Ref::ARRAY;
 
 # tie a proxy array around the real one
@@ -228,7 +235,6 @@ sub SHIFT     { shift @{ $_[0][0] } }
 sub UNSHIFT   { my $o = shift->[0]; unshift @$o, @_ }
 sub EXISTS    { exists $_[0][0]->[$_[1]] }
 sub DELETE    { delete $_[0][0]->[$_[1]] }
-#>>>
 sub SPLICE {
     my $ob  = shift;
     my $sz  = $ob->FETCHSIZE;
@@ -237,6 +243,7 @@ sub SPLICE {
     my $len = @_ ? shift : $sz - $off;
     splice @{ $ob->[0] }, $off, $len, @_;
 }
+#>>>
 
 ##
 ## These are bypassed via %nowrap for safety/sanity
@@ -273,6 +280,26 @@ use base 'Class::Ref::GLOB';
 package Class::Ref::IO;
 
 use base 'Class::Ref::GLOB';
+
+=head1 GUTS
+
+All objects created and returned by L<Class::Ref> are blessed REF types. This
+is what protects the original reference from being blessed into an unwanted
+package. The C<ref> type of the given value is what determines what package the
+REF is blessed into. HASHes go into C<Class::Ref::HASH> and ARRAYs go into
+C<Class::Ref::ARRAY>.
+
+The use of the L<overload> pragma to overload the dereference operators allows
+the REF object to still be accesed as HASH refs and ARRAY refs. When these REFs
+are coerced into their approriate type, they are wrapped in a tie mechanism to
+retain control over the return of member values.
+
+The only way to fully bypass all of this is to manually dereference the REF
+object:
+
+    $o = Class::Ref->new({ foo => 1 });
+    $$o->{foo};
+
 
 =head1 SEE ALSO
 
