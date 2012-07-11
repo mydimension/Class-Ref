@@ -1,3 +1,4 @@
+use 5.006001;
 use Module::Build;
 my $build = Module::Build->new(
     module_name => 'Class::Ref',
