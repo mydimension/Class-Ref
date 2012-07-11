@@ -47,6 +47,13 @@ Should you ever need to work with the raw contents of the data structure,
 setting C<$raw_access> with cause every member retrieval to just the referenced
 data rather than a wrapped form of it.
 
+The observant reader will note that this does not provide access to the base
+data. In order to access that, you must dereference the object:
+
+    $$o; $ returns { foo => { bar => 1 } } unblessed
+
+See L<GUTS|/GUTS> for more information.
+
 =cut
 
 # bypass wrapping and access the raw data structure
@@ -210,7 +217,26 @@ sub SCALAR   { scalar %{ $_[0][0] } }
 
 =head1 ARRAY Refs
 
+Wrapping ARRAYs is much less straightforward. Using an C<AUTOLOAD> method
+doesn't help because perl symbols cannot begin with a number. Makes it a
+little difficult to do the following:
 
+    $o->0;    # compile error
+
+So for the purpose of this module, wrapped ARRAYs exactly like an ARRAY
+reference:
+
+    $o->[0];    # ahh, much better
+
+The tricky part comes in wanting to make sure that values returned from such a
+call would still be wrapped:
+
+    $o->[0]->foo;    # $o = [{ foo => 'bar' }]
+
+See L<GUTS|/GUTS> for more discussion on how this is done.
+
+I am still debating if adding formal accessors moethods would be helpful in
+this context.
 
 =cut
 
@@ -269,6 +295,15 @@ object:
     $o = Class::Ref->new({ foo => 1 });
     $$o->{foo};
 
+=head1 CAVEATS
+
+When dealing with a wrapped HASH, there is no way to access keys named C<isa>
+and C<can>. They are core methods perl uses to interact with OO values.
+
+Accessing HASH members with invalid perl symbols is possible with a little work:
+
+    my $method = '0) key';
+    $o->$method;    # access $o->{'0) key'};
 
 =head1 SEE ALSO
 
@@ -300,6 +335,13 @@ like C<AUTOLOAD> and C<DESTROY>.
 =head1 AUTHOR
 
 William Cox <mydimension@gmail.com>
+
+=head1 LICENSE
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+See L<http://dev.perl.org/licenses/>
 
 =cut
 
