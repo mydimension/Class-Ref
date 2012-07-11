@@ -2,3 +2,7 @@ Build
 _build/
 blib/
 cover_db/
+*.bak
+MYMETA.*
+Class-Ref-*.tar.gz
+Class-Ref-*/
