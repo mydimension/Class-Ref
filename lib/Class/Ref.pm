@@ -149,6 +149,9 @@ data referenced with C<$o> remains the same as when it originally wrapped.
 
 package Class::Ref::HASH;
 
+use strict;
+use warnings;
+
 use overload '%{}' => sub {
     return ${ $_[0] } if $raw_access;
     tie my %h, __PACKAGE__ . '::Tie', ${ $_[0] };
@@ -188,6 +191,9 @@ sub AUTOLOAD {
 
 package Class::Ref::HASH::Tie;
 
+use strict;
+use warnings;
+
 # borrowed from Tie::StdHash (in Tie::Hash)
 
 #<<< ready... steady... cross-eyed!!
@@ -210,6 +216,9 @@ sub SCALAR   { scalar %{ $_[0][0] } }
 
 package Class::Ref::ARRAY;
 
+use strict;
+use warnings;
+
 # tie a proxy array around the real one
 use overload '@{}' => sub {
     return ${ $_[0] } if $raw_access;
@@ -219,6 +228,9 @@ use overload '@{}' => sub {
   fallback => 1;
 
 package Class::Ref::ARRAY::Tie;
+
+use strict;
+use warnings;
 
 # borrowed from Tie::StdArray (in Tie::Array)
 
