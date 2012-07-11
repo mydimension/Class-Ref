@@ -247,6 +247,10 @@ sub SHIFT     { shift @{ $_[0][0] } }
 sub UNSHIFT   { my $o = shift->[0]; unshift @$o, @_ }
 sub EXISTS    { exists $_[0][0]->[$_[1]] }
 sub DELETE    { delete $_[0][0]->[$_[1]] }
+sub EXTEND    { $_[0]->STORESIZE($_[1]) }
+sub SPLICE    { splice @{ shift->[0] }, shift, shift, @_ }
+=comment
+
 sub SPLICE {
     my $ob  = shift;
     my $sz  = $ob->FETCHSIZE;
@@ -255,7 +259,11 @@ sub SPLICE {
     my $len = @_ ? shift : $sz - $off;
     splice @{ $ob->[0] }, $off, $len, @_;
 }
+
+=cut
 #>>>
+
+=comment
 
 ##
 ## These are bypassed via %nowrap for safety/sanity
@@ -292,6 +300,8 @@ use base 'Class::Ref::GLOB';
 package Class::Ref::IO;
 
 use base 'Class::Ref::GLOB';
+
+=cut
 
 =head1 GUTS
 
