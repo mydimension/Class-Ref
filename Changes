@@ -1,3 +1,8 @@
+0.03  Thu Jul 12 07:59:30 2012 -0400
+    Bug Fixes
+    * Use more reliable $] perl version variable in test [20]
+
+
 0.02  Wed Jul 11 22:40:36 2012 -0400
     Bug Fixes
     * Fixed test [20] to only check FORMAT, Regexp, VSTRING in the approriate
