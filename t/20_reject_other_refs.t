@@ -38,10 +38,10 @@ my $obj = Class::Ref->new({});
 while (my ($type, $ref) = each %tests) {
     SKIP: {
         skip "$ref not available in perl < 5.8.9", 1
-          if $ref =~ /^(FORMAT|IO|Regexp$)/ and $^V < 5.008009;
+          if $ref =~ /^(FORMAT|IO|Regexp$)/ and $] < 5.008009;
 
         skip "$ref not available in perl < 5.10.0", 1
-          if $ref eq 'VSTRING' and $^V < 5.010000;
+          if $ref eq 'VSTRING' and $] < 5.010000;
 
         $obj->holder($ref);
         is ref $obj->holder, $type, " passthru $type";
