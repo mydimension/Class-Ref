@@ -38,7 +38,7 @@ my $obj = Class::Ref->new({});
 while (my ($type, $ref) = each %tests) {
     SKIP: {
         skip "$type not available in perl < 5.8.9", 1
-          if $type =~ /^(FORMAT|IO|Regexp$)/ and $] < 5.008009;
+          if $type =~ /^(FORMAT|IO|Regexp)$/ and $] < 5.008009;
 
         skip "$type not available in perl < 5.10.0", 1
           if $type eq 'VSTRING' and $] < 5.010000;
