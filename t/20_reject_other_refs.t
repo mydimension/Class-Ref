@@ -17,15 +17,15 @@ format =
 .
 
 my %tests = (
+    SCALAR  => \1,
     CODE    => sub { },
-    FORMAT  => *STDOUT{FORMAT},
+    REF     => \\1,
     GLOB    => \*_,
     LVALUE  => \substr($str, 0, 1),
-    REF     => \\1,
-    Regexp  => qr//,
-    SCALAR  => \1,
-    VSTRING => \v1.0,
-    #IO => *STDIN{IO}, # not really testable
+    FORMAT  => *STDOUT{FORMAT},       # >= 5.8.9
+    Regexp  => qr//,                  # >= 5.8.9
+    VSTRING => \v1.0,                 # >= 5.10.0
+##  IO => *STDIN{IO}, # not really testable (>= 5.8.9)
 );
 
 while (my ($type, $ref) = each %tests) {
@@ -36,6 +36,14 @@ while (my ($type, $ref) = each %tests) {
 my $obj = Class::Ref->new({});
 
 while (my ($type, $ref) = each %tests) {
-    $obj->holder($ref);
-    is ref $obj->holder, $type, "passthru $type";
+    SKIP: {
+        skip "$ref not available in perl < 5.8.9", 1
+          if $ref =~ /^(FORMAT|IO|Regexp$)/ and $^V < 5.008009;
+
+        skip "$ref not available in perl < 5.10.0", 1
+          if $ref eq 'VSTRING' and $^V < 5.010000;
+
+        $obj->holder($ref);
+        is ref $obj->holder, $type, " passthru $type";
+    }
 }
