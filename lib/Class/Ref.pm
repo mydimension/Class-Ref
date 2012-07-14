@@ -101,7 +101,7 @@ my $test = sub {
 
 my $assign = sub {
     my $v = shift;
-    $$v = pop if @_;
+    $$v = shift if @_;
     return $test->($$v) ? \__PACKAGE__->$bless($$v) : $v;
 };
 
@@ -252,6 +252,20 @@ use overload '@{}' => sub {
     \@a;
   },
   fallback => 1;
+
+sub index {
+    my $self = shift;
+    defined(my $i = shift) or Carp::croak "No index given";
+    ${ $assign->(\$$self->[$i], @_) };
+}
+
+sub iterator {
+    my $self = shift;
+    my $i    = 0;
+    # preserve access mode for the life of the iterator
+    local $raw_access = $raw_access;
+    return sub { ${ $assign->(\$$self->[$i++]) } };
+}
 
 package Class::Ref::ARRAY::Tie;
 
