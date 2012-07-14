@@ -1,13 +1,19 @@
-0.03  Thu Jul 12 07:59:30 2012 -0400
+0.04  2012-07-12
+    Bug Fixes
+    * fixed test [20] to test and display the right loop variable
+    * Changed Ref.pm to use ref() instead of reftype()
+
+
+0.03  2012-07-12
     Bug Fixes
     * Use more reliable $] perl version variable in test [20]
 
 
-0.02  Wed Jul 11 22:40:36 2012 -0400
+0.02  2012-07-11
     Bug Fixes
     * Fixed test [20] to only check FORMAT, Regexp, VSTRING in the approriate
       versions of perl when they first appeared
 
 
-0.01  Wed Jul 11 17:43:15 2012 -0400
+0.01  2012-07-11
     Initial Release
