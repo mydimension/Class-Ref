@@ -267,6 +267,40 @@ sub iterator {
     return sub { ${ $assign->(\$$self->[$i++]) } };
 }
 
+our $AUTOLOAD;
+
+sub AUTOLOAD {
+    # enable access to $o->caller::AUTOLOAD
+    my ($name) = defined $AUTOLOAD ? $AUTOLOAD =~ /([^:]+)$/ : ('AUTOLOAD');
+
+    # undef so that we can detect if next call is for $o->caller::AUTOLOAD
+    # - needed cause $AUTOLOAD stays set to previous value until next call
+    undef $AUTOLOAD;
+
+    return if $name eq 'DESTROY';
+
+    # NOTE must do this after AUTOLOAD check
+    # - weird things happen when a wrapped ARRAY is an element of a wrapped
+    #   ARRAY. tie'd ARRAYs have some lvalue magic on their FETCHed values.
+    #   As a result, this call to shift triggers the tie object call to FETCH
+    #   to ensure the lvalue is still valid.
+    my $self = shift;
+
+    # honor @ISA if the caller is using it
+    my $pkg = caller;
+    my $idx = $pkg->can($name) ? $pkg->$name : undef;
+
+    (defined $idx and $idx =~ /^\d+$/)
+      or Carp::croak "'$name' is not a numeric constant in '$pkg'";
+
+    # simulate a fetch for a non-existent index without autovivification
+    return undef unless exists $$self->[$idx] or @_;
+
+    # keep this broken up in case I decide to implement lvalues
+    my $o = $assign->(\$$self->[$idx], @_);
+    $$o;
+}
+
 package Class::Ref::ARRAY::Tie;
 
 use strict;
