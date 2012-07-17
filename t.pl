@@ -7,6 +7,12 @@ use lib './lib';
 use Class::Ref;
 use Data::Dumper;
 
+my $foo = 'foobar';
+my $o = bless \\$foo => 'Class::Ref::SCALAR';
+
+print "$o\n";
+print "$$o\n";
+
 my $t = Class::Ref->new(['foo']);
 $t->[1] = {bar => 1};
 
@@ -22,5 +28,9 @@ my $r = Class::Ref->new(
         code => sub { print "hello\n" },
     }
 );
+
+package Class::Ref::SCALAR;
+
+use overload '${}' => sub { no overloading '${}'; ${ $_[0] } }, fallback => 1;
 
 exit;
