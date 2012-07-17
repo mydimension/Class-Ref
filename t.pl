@@ -31,6 +31,7 @@ my $r = Class::Ref->new(
 
 package Class::Ref::SCALAR;
 
+# 'overloading' added in 5.10.1
 use overload '${}' => sub { no overloading '${}'; ${ $_[0] } }, fallback => 1;
 
 exit;
