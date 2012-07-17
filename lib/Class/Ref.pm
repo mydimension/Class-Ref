@@ -261,10 +261,13 @@ sub index {
 
 sub iterator {
     my $self = shift;
+    my $raw  = $raw_access;
     my $i    = 0;
-    # preserve access mode for the life of the iterator
-    local $raw_access = $raw_access;
-    return sub { ${ $assign->(\$$self->[$i++]) } };
+    return sub {
+        # preserve access mode for the life of the iterator
+        local $raw_access = $raw;
+        ${ $assign->(\$$self->[$i++]) } ;
+    };
 }
 
 our $AUTOLOAD;
