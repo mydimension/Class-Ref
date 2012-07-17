@@ -50,7 +50,7 @@ data rather than a wrapped form of it.
 The observant reader will note that this does not provide access to the base
 data. In order to access that, you must dereference the object:
 
-    $$o; $ returns { foo => { bar => 1 } } unblessed
+    $$o;    # returns { foo => { bar => 1 } } unblessed
 
 See L<GUTS|/GUTS> for more information.
 
