@@ -62,3 +62,6 @@ t.pl
 
 # Avoid archives of this distribution
 \bClass-Ref-[\d\.\_]+
+
+# skip the travis-ci config
+\B\.travs\.yml
