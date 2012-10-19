@@ -34,7 +34,7 @@ OPTIONS
         the base data. In order to access that, you must dereference the
         object:
 
-            $$o; $ returns { foo => { bar => 1 } } unblessed
+            $$o;    # returns { foo => { bar => 1 } } unblessed
 
         See GUTS for more information.
 

@@ -27,7 +27,7 @@ use warnings;
 use Scalar::Util ();
 use Carp ();
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 OPTIONS
 

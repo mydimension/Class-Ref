@@ -4,7 +4,7 @@
       "William Cox <mydimension@gmail.com>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.4, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Module::Build version 0.4003, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -46,7 +46,7 @@
    "provides" : {
       "Class::Ref" : {
          "file" : "lib/Class/Ref.pm",
-         "version" : "0.04"
+         "version" : "0.05"
       },
       "Class::Ref::ARRAY" : {
          "file" : "lib/Class/Ref.pm",
@@ -77,5 +77,5 @@
          "url" : "https://github.com/mydimension/Class-Ref.git"
       }
    },
-   "version" : "0.04"
+   "version" : "0.05"
 }

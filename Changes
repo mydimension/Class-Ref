@@ -1,3 +1,13 @@
+0.05  2012-10-18
+    New features
+    * Iterator methods for arrays
+    * Methods in the calling package can be interpolated as Array indeces
+    Improvements
+    * Removed uses of regular expressions in favor of simpler patterns
+    Bug fixes
+    * 'shift' instead of 'pop' in $assign
+
+
 0.04  2012-07-12
     Bug Fixes
     * fixed test [20] to test and display the right loop variable
