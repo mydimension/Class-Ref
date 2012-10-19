@@ -170,7 +170,10 @@ our $AUTOLOAD;
 
 sub AUTOLOAD {
     # enable access to $h->{AUTOLOAD}
-    my ($name) = defined $AUTOLOAD ? $AUTOLOAD =~ /([^:]+)$/ : ('AUTOLOAD');
+    my $name
+      = defined $AUTOLOAD
+      ? substr($AUTOLOAD, rindex $AUTOLOAD, ':')
+      : 'AUTOLOAD';
 
     # undef so that we can detect if next call is for $h->{AUTOLOAD}
     # - needed cause $AUTOLOAD stays set to previous value until next call
@@ -274,7 +277,10 @@ our $AUTOLOAD;
 
 sub AUTOLOAD {
     # enable access to $o->caller::AUTOLOAD
-    my ($name) = defined $AUTOLOAD ? $AUTOLOAD =~ /([^:]+)$/ : ('AUTOLOAD');
+    my $name
+      = defined $AUTOLOAD
+      ? substr($AUTOLOAD, rindex $AUTOLOAD, ':')
+      : 'AUTOLOAD';
 
     # undef so that we can detect if next call is for $o->caller::AUTOLOAD
     # - needed cause $AUTOLOAD stays set to previous value until next call
@@ -293,8 +299,11 @@ sub AUTOLOAD {
     my $pkg = caller;
     my $idx = $pkg->can($name) ? $pkg->$name : undef;
 
-    (defined $idx and $idx =~ /^\d+$/)
-      or Carp::croak "'$name' is not a numeric constant in '$pkg'";
+    {
+        no warnings 'numeric';
+        defined $idx and $idx == int($idx)
+          or Carp::croak "'$name' is not a numeric constant in '$pkg'";
+    }
 
     # simulate a fetch for a non-existent index without autovivification
     return undef unless exists $$self->[$idx] or @_;
