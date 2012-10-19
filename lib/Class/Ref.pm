@@ -172,7 +172,7 @@ sub AUTOLOAD {
     # enable access to $h->{AUTOLOAD}
     my $name
       = defined $AUTOLOAD
-      ? substr($AUTOLOAD, rindex $AUTOLOAD, ':')
+      ? substr($AUTOLOAD, 1 + rindex $AUTOLOAD, ':')
       : 'AUTOLOAD';
 
     # undef so that we can detect if next call is for $h->{AUTOLOAD}
@@ -279,7 +279,7 @@ sub AUTOLOAD {
     # enable access to $o->caller::AUTOLOAD
     my $name
       = defined $AUTOLOAD
-      ? substr($AUTOLOAD, rindex $AUTOLOAD, ':')
+      ? substr($AUTOLOAD, 1 + rindex $AUTOLOAD, ':')
       : 'AUTOLOAD';
 
     # undef so that we can detect if next call is for $o->caller::AUTOLOAD
@@ -301,7 +301,7 @@ sub AUTOLOAD {
 
     {
         no warnings 'numeric';
-        defined $idx and $idx == int($idx)
+        defined $idx and $idx eq int($idx)
           or Carp::croak "'$name' is not a numeric constant in '$pkg'";
     }
 
