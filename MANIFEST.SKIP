@@ -65,3 +65,6 @@ t.pl
 
 # skip the travis-ci config
 \B\.travs\.yml
+
+# don't send NOTES file to CPAN
+NOTES
