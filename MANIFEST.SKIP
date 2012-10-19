@@ -64,7 +64,7 @@ t.pl
 \bClass-Ref-[\d\.\_]+
 
 # skip the travis-ci config
-\B\.travs\.yml
+\.travis\.yml
 
 # don't send NOTES file to CPAN
 NOTES
