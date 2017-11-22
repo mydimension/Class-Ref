@@ -63,7 +63,7 @@ our $raw_access = 0;
 
     $o = Class::Ref->new({ foo => { bar => 1 } });
     {
-        $Class::Ref::allow_undef = 1;
+        local $Class::Ref::allow_undef = 1;
         $o->not_here;    # returns undef
     }
     $o->not_here;        # raises exception
