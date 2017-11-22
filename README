@@ -46,8 +46,8 @@ OPTIONS
             }
             $o->not_here;        # raises exception
 
-        By default, an excpetion will be raised if you try read from a HASH
-        key that is non-existent.
+        By default, an exception will be raised if you try to read from a
+        HASH key that is non-existent.
 
 METHODS
     There is only the constructor.
@@ -100,7 +100,7 @@ ARRAY Refs
 
     See GUTS for more discussion on how this is done.
 
-    I am still debating if adding formal accessors moethods would be helpful
+    I am still debating if adding formal accessor methods would be helpful
     in this context.
 
 GUTS
@@ -111,9 +111,10 @@ GUTS
     and ARRAYs go into "Class::Ref::ARRAY".
 
     The use of the overload pragma to overload the dereference operators
-    allows the REF object to still be accesed as HASH refs and ARRAY refs.
-    When these REFs are coerced into their approriate type, they are wrapped
-    in a tie mechanism to retain control over the return of member values.
+    allows the REF object to still be accessed as HASH refs and ARRAY refs.
+    When these REFs are coerced into their appropriate type, they are
+    wrapped in a tie mechanism to retain control over the return of member
+    values.
 
     The only way to fully bypass all of this is to manually dereference the
     REF object:
@@ -142,17 +143,17 @@ SEE ALSO
 
     *   Class::Hash
 
-        Probably the defacto module for creating accessors to a hash.
+        Probably the de facto module for creating accessors to a hash.
         However, it only provides a single layer of encapsulation.
 
     *   Class::ConfigHash
 
-        Provides a deeper implementaion but takes (avoids) steps to make the
-        hash read-only.
+        Provides a deeper implementation but takes (avoids) steps to make
+        the hash read-only.
 
     *   Hash::AsObject
 
-        Also provides a deep implemetation. Goes further to provide access
+        Also provides a deep implementation. Goes further to provide access
         to methods like "AUTOLOAD" and "DESTROY".
 
 AUTHOR
