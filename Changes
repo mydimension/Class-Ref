@@ -1,3 +1,9 @@
+Revision history for {{$dist->name}}
+
+{{$NEXT}}
+    Improvements
+    * Documentaion cleanup (including broken sample code) [Jon Jensen]
+
 0.05  2012-10-18
     New features
     * Iterator methods for arrays
