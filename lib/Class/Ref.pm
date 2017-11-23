@@ -1,5 +1,7 @@
 package Class::Ref;
 
+# ABSTRACT: Automatic OO wrapping of container references
+
 =head1 NAME
 
 Class::Ref - Automatic OO wrapping of container references
@@ -26,8 +28,6 @@ use warnings;
 
 use Scalar::Util ();
 use Carp ();
-
-our $VERSION = '0.05';
 
 =head1 OPTIONS
 

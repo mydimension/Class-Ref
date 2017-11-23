@@ -6,3 +6,4 @@ cover_db/
 MYMETA.*
 Class-Ref-*.tar.gz
 Class-Ref-*/
+.build/
